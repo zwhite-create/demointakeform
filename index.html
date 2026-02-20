@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Intake Wizard</title>
+    <style>
+        :root {
+            --color-bg-primary: #f3f2f1;
+            --color-bg-secondary: #ffffff;
+            --color-text-primary: #032d60;
+            --color-text-secondary: #3e3e3c;
+            --color-accent: #0176d3;
+            --color-accent-hover: #014486;
+            --color-success: #2e844a;
+            --color-border: #c9c7c5;
+            --color-error: #ea001e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--color-bg-secondary);
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--color-accent);
+            color: white;
+            padding: 24px 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--color-success);
+            transition: width 0.3s ease;
+        }
+
+        .content {
+            padding: 40px 32px;
+            min-height: 400px;
+        }
+
+        .step {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 22px;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .step-subtitle {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: var(--color-error);
+        }
+
+        input[type="text"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(1, 118, 211, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .product-item input {
+            flex: 1;
+        }
+
+        .product-item .product-why {
+            flex: 2;
+        }
+
+        .add-button,
+        .remove-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .add-button {
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .add-button:hover {
+            background: #e0e0e0;
+        }
+
+        .remove-button {
+            background: transparent;
+            color: var(--color-error);
+            padding: 8px;
+        }
+
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .list-item input {
+            flex: 1;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 24px 32px;
+            border-top: 1px solid var(--color-border);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e6d3a;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .summary-section {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--color-bg-primary);
+            border-radius: 6px;
+        }
+
+        .summary-section h3 {
+            color: var(--color-text-primary);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .summary-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .summary-label {
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .voice-status {
+            font-size: 12px;
+            color: var(--color-error);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 24px 16px;
+            }
+            
+            .actions {
+                padding: 16px;
+            }
+            
+            .product-item {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Demo Intake Form</h1>
+            <p>Help me deliver the best demo experience for your opportunity</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="content">
+            <!-- Step 1: Basic Info -->
+            <div class="step active" data-step="1">
+                <h2 class="step-title">Basic Information</h2>
+                <p class="step-subtitle">Let's start with the essentials</p>
+                
+                <div class="form-group">
+                    <label>Account Name <span class="required">*</span></label>
+                    <input type="text" id="accountName" placeholder="Enter account name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Opportunity Link</label>
+                    <input type="url" id="opptyLink" placeholder="Paste Salesforce opportunity URL">
+                </div>
+
+                <div class="form-group">
+                    <label>Company Website</label>
+                    <input type="url" id="website" placeholder="https://example.com">
+                </div>
+            </div>
+
+            <!-- Step 2: Deal POV & Products -->
+            <div class="step" data-step="2">
+                <h2 class="step-title">Deal Strategy</h2>
+                <p class="step-subtitle">How are we helping them win?</p>
+                
+                <div class="form-group">
+                    <label>Our Deal POV <span class="required">*</span></label>
+                    <textarea id="dealPov" placeholder="Describe how we're helping them win this deal..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Products We're Suggesting & Why <span class="required">*</span></label>
+                    <div class="product-list" id="productList">
+                        <div class="product-item">
+                            <input type="text" class="product-name" placeholder="Product name">
+                            <input type="text" class="product-why" placeholder="Why this product?">
+                        </div>
+                    </div>
+                    <button type="button" class="add-button" onclick="addProduct()">+ Add Another Product</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Business Context -->
+            <div class="step" data-step="3">
+                <h2 class="step-title">Business Context</h2>
+                <p class="step-subtitle">Understanding their goals and challenges</p>
+                
+                <div class="form-group">
+                    <label>Key Business Issues / Goals <span class="required">*</span></label>
+                    <div class="list-group" id="issuesList">
+                        <div class="list-item">
+                            <input type="text" class="issue-input" placeholder="Enter a business issue or goal">
+                        </div>
+                    </div>
+                    <button type="button" class="add-button" onclick="addIssue()">+ Add Another Issue</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Use Case Description <span class="required">*</span></label>
+                    <textarea id="useCase" placeholder="Tell me about their use case..."></textarea>
+                </div>
+            </div>
+
+            <!-- Step 4: Tech Stack -->
+            <div class="step" data-step="4">
+                <h2 class="step-title">Technology Landscape</h2>
+                <p class="step-subtitle">Current tech they own</p>
+                
+                <div class="form-group">
+                    <label>Current Salesforce Tech Owned</label>
+                    <textarea id="sfTech" placeholder="List Salesforce products they currently use..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>External Tech Owned</label>
+                    <textarea id="externalTech" placeholder="List external/competitor products they use..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Team Personality (Serious or Fun?) <span class="required">*</span></label>
+                    <input type="text" id="personality" placeholder="Should I be more serious or more fun?">
+                </div>
+            </div>
+
+            <!-- Step 5: Company Details -->
+            <div class="step" data-step="5">
+                <h2 class="step-title">Company & Audience</h2>
+                <p class="step-subtitle">Understanding their business model</p>
+                
+                <div class="form-group">
+                    <label>How Do They Make Money? <span class="required">*</span></label>
+                    <textarea id="revenue" placeholder="Describe their revenue model..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>B2B or B2C? <span class="required">*</span></label>
+                    <select id="audience" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 14px; font-family: inherit; background: white;">
+                        <option value="">Select business model...</option>
+                        <option value="B2B">B2B</option>
+                        <option value="B2C">B2C</option>
+                        <option value="Both">Both</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Step 6: Contacts & Timeline -->
+            <div class="step" data-step="6">
+                <h2 class="step-title">Meeting Details</h2>
+                <p class="step-subtitle">Who's attending and when</p>
+                
+                <div class="form-group">
+                    <label>Point of Contacts</label>
+                    <div class="list-group" id="contactsList">
+                        <div class="list-item">
+                            <input type="text" class="contact-input" placeholder="Name, role, why are they coming?">
+                        </div>
+                    </div>
+                    <button type="button" class="add-button" onclick="addContact()">+ Add Another Contact</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Implementation Partner</label>
+                    <input type="text" id="partner" placeholder="Implementation partner name">
+                </div>
+
+                <div class="form-group">
+                    <label>Timeline</label>
+                    <input type="text" id="timeline" placeholder="When do they need to make a decision?">
+                </div>
+            </div>
+
+            <!-- Step 7: Risks & Additional Info -->
+            <div class="step" data-step="7">
+                <h2 class="step-title">Final Details</h2>
+                <p class="step-subtitle">Risks and anything else I should know</p>
+                
+                <div class="form-group">
+                    <label>Competitor</label>
+                    <input type="text" id="competitor" placeholder="Who are we competing against?">
+                </div>
+
+                <div class="form-group">
+                    <label>Any Risks I Should Be Aware Of?</label>
+                    <textarea id="risks" placeholder="Any deal risks, concerns, or blockers?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Anything Else?</label>
+                    <textarea id="additional" placeholder="Any other context or notes..."></textarea>
+                </div>
+            </div>
+
+            <!-- Step 8: Review -->
+            <div class="step" data-step="8">
+                <h2 class="step-title">Review Your Submission</h2>
+                <p class="step-subtitle">Make sure everything looks good before generating your document</p>
+                
+                <div id="summaryContent"></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousStep()">← Previous</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
+            <button class="btn btn-success" id="generateBtn" style="display: none;" onclick="generatePDF()">📄 Download PDF</button>
+            <button class="btn btn-success" id="generateDocBtn" style="display: none;" onclick="generateDoc()">📝 Download DOC</button>
+            <button class="btn btn-secondary" id="generateTxtBtn" style="display: none;" onclick="generateTxt()">📋 Download TXT</button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 8;
+
+        function addProduct() {
+            const productList = document.getElementById('productList');
+            const newItem = document.createElement('div');
+            newItem.className = 'product-item';
+            newItem.innerHTML = `
+                <input type="text" class="product-name" placeholder="Product name">
+                <input type="text" class="product-why" placeholder="Why this product?">
+                <button type="button" class="remove-button" onclick="this.parentElement.remove()">✕</button>
+            `;
+            productList.appendChild(newItem);
+        }
+
+        function addIssue() {
+            const issuesList = document.getElementById('issuesList');
+            const newItem = document.createElement('div');
+            newItem.className = 'list-item';
+            newItem.innerHTML = `
+                <input type="text" class="issue-input" placeholder="Enter a business issue or goal">
+                <button type="button" class="remove-button" onclick="this.parentElement.remove()">✕</button>
+            `;
+            issuesList.appendChild(newItem);
+        }
+
+        function addContact() {
+            const contactsList = document.getElementById('contactsList');
+            const newItem = document.createElement('div');
+            newItem.className = 'list-item';
+            newItem.innerHTML = `
+                <input type="text" class="contact-input" placeholder="Name, role, why are they coming?">
+                <button type="button" class="remove-button" onclick="this.parentElement.remove()">✕</button>
+            `;
+            contactsList.appendChild(newItem);
+        }
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`[data-step="${step}"]`).classList.add('active');
+            
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            prevBtn.style.display = step === 1 ? 'none' : 'block';
+            
+            if (step === totalSteps) {
+                nextBtn.style.display = 'none';
+                generateBtn.style.display = 'inline-block';
+                document.getElementById('generateDocBtn').style.display = 'inline-block';
+                document.getElementById('generateTxtBtn').style.display = 'inline-block';
+                showSummary();
+            } else {
+                nextBtn.style.display = 'block';
+                generateBtn.style.display = 'none';
+                document.getElementById('generateDocBtn').style.display = 'none';
+                document.getElementById('generateTxtBtn').style.display = 'none';
+            }
+            
+            updateProgress();
+        }
+
+        function validateStep(step) {
+            const stepDiv = document.querySelector(`[data-step="${step}"]`);
+            const requiredFields = stepDiv.querySelectorAll('[required], .step-subtitle + .form-group input, .step-subtitle + .form-group textarea');
+            
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                }
+            });
+            
+            return isValid;
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function getFormData() {
+            const data = {
+                accountName: document.getElementById('accountName').value,
+                opptyLink: document.getElementById('opptyLink').value,
+                website: document.getElementById('website').value,
+                dealPov: document.getElementById('dealPov').value,
+                products: [],
+                issues: [],
+                useCase: document.getElementById('useCase').value,
+                sfTech: document.getElementById('sfTech').value,
+                externalTech: document.getElementById('externalTech').value,
+                personality: document.getElementById('personality').value,
+                revenue: document.getElementById('revenue').value,
+                audience: document.getElementById('audience').value,
+                contacts: [],
+                partner: document.getElementById('partner').value,
+                timeline: document.getElementById('timeline').value,
+                competitor: document.getElementById('competitor').value,
+                risks: document.getElementById('risks').value,
+                additional: document.getElementById('additional').value
+            };
+
+            // Get products
+            document.querySelectorAll('.product-item').forEach(item => {
+                const name = item.querySelector('.product-name').value;
+                const why = item.querySelector('.product-why').value;
+                if (name || why) {
+                    data.products.push({ name, why });
+                }
+            });
+
+            // Get issues
+            document.querySelectorAll('.issue-input').forEach(input => {
+                if (input.value.trim()) {
+                    data.issues.push(input.value);
+                }
+            });
+
+            // Get contacts
+            document.querySelectorAll('.contact-input').forEach(input => {
+                if (input.value.trim()) {
+                    data.contacts.push(input.value);
+                }
+            });
+
+            return data;
+        }
+
+        function showSummary() {
+            const data = getFormData();
+            const summaryContent = document.getElementById('summaryContent');
+            
+            let html = '';
+            
+            if (data.accountName) {
+                html += `<div class="summary-section">
+                    <h3>Basic Information</h3>
+                    <div class="summary-item"><span class="summary-label">Account:</span> ${data.accountName}</div>
+                    ${data.opptyLink ? `<div class="summary-item"><span class="summary-label">Opportunity:</span> ${data.opptyLink}</div>` : ''}
+                    ${data.website ? `<div class="summary-item"><span class="summary-label">Website:</span> ${data.website}</div>` : ''}
+                </div>`;
+            }
+
+            if (data.dealPov) {
+                html += `<div class="summary-section">
+                    <h3>Deal Strategy</h3>
+                    <div class="summary-item"><span class="summary-label">POV:</span> ${data.dealPov}</div>
+                    ${data.products.length > 0 ? `<div class="summary-item"><span class="summary-label">Products:</span> ${data.products.map(p => p.name + (p.why ? ` - ${p.why}` : '')).join(', ')}</div>` : ''}
+                </div>`;
+            }
+
+            if (data.issues.length > 0 || data.useCase) {
+                html += `<div class="summary-section">
+                    <h3>Business Context</h3>
+                    ${data.issues.length > 0 ? `<div class="summary-item"><span class="summary-label">Key Issues:</span> ${data.issues.join(', ')}</div>` : ''}
+                    ${data.useCase ? `<div class="summary-item"><span class="summary-label">Use Case:</span> ${data.useCase}</div>` : ''}
+                </div>`;
+            }
+
+            if (data.sfTech || data.externalTech || data.personality) {
+                html += `<div class="summary-section">
+                    <h3>Tech & Team</h3>
+                    ${data.sfTech ? `<div class="summary-item"><span class="summary-label">SF Tech:</span> ${data.sfTech}</div>` : ''}
+                    ${data.externalTech ? `<div class="summary-item"><span class="summary-label">External Tech:</span> ${data.externalTech}</div>` : ''}
+                    ${data.personality ? `<div class="summary-item"><span class="summary-label">Personality:</span> ${data.personality}</div>` : ''}
+                </div>`;
+            }
+
+            summaryContent.innerHTML = html || '<p>No data entered yet.</p>';
+        }
+
+        function generatePDF() {
+            const data = getFormData();
+            
+            // Create simple HTML for PDF
+            let html = `
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
+                        h1 { color: #0176d3; border-bottom: 3px solid #0176d3; padding-bottom: 10px; }
+                        h2 { color: #032d60; margin-top: 20px; border-bottom: 1px solid #ccc; }
+                        .section { margin-bottom: 20px; }
+                        .label { font-weight: bold; color: #032d60; }
+                        ul { margin: 10px 0; }
+                        li { margin: 5px 0; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Demo Intake Form</h1>
+                    <h2>${data.accountName || '[Account Name]'}</h2>
+            `;
+            
+            if (data.opptyLink) html += `<p><span class="label">Opportunity:</span> ${data.opptyLink}</p>`;
+            if (data.website) html += `<p><span class="label">Website:</span> ${data.website}</p>`;
+            
+            if (data.dealPov) {
+                html += `<div class="section"><h2>Our Deal POV</h2><p>${data.dealPov}</p></div>`;
+            }
+            
+            if (data.products.length > 0) {
+                html += `<div class="section"><h2>Products We're Suggesting</h2><ul>`;
+                data.products.forEach(p => {
+                    html += `<li>${p.name}${p.why ? ` - ${p.why}` : ''}</li>`;
+                });
+                html += `</ul></div>`;
+            }
+            
+            if (data.issues.length > 0) {
+                html += `<div class="section"><h2>Key Business Issues / Goals</h2><ul>`;
+                data.issues.forEach(i => html += `<li>${i}</li>`);
+                html += `</ul></div>`;
+            }
+            
+            if (data.useCase) html += `<div class="section"><h2>Use Case</h2><p>${data.useCase}</p></div>`;
+            if (data.sfTech) html += `<div class="section"><h2>Current Salesforce Tech</h2><p>${data.sfTech}</p></div>`;
+            if (data.externalTech) html += `<div class="section"><h2>External Tech</h2><p>${data.externalTech}</p></div>`;
+            if (data.personality) html += `<div class="section"><h2>Team Personality</h2><p>${data.personality}</p></div>`;
+            if (data.revenue) html += `<div class="section"><h2>How They Make Money</h2><p>${data.revenue}</p></div>`;
+            if (data.audience) html += `<div class="section"><h2>Business Model</h2><p>${data.audience}</p></div>`;
+            
+            if (data.contacts.length > 0) {
+                html += `<div class="section"><h2>Point of Contacts</h2><ul>`;
+                data.contacts.forEach(c => html += `<li>${c}</li>`);
+                html += `</ul></div>`;
+            }
+            
+            if (data.partner) html += `<p><span class="label">Implementation Partner:</span> ${data.partner}</p>`;
+            if (data.timeline) html += `<p><span class="label">Timeline:</span> ${data.timeline}</p>`;
+            if (data.competitor) html += `<p><span class="label">Competitor:</span> ${data.competitor}</p>`;
+            if (data.risks) html += `<div class="section"><h2>Risks</h2><p>${data.risks}</p></div>`;
+            if (data.additional) html += `<div class="section"><h2>Additional Notes</h2><p>${data.additional}</p></div>`;
+            
+            html += `</body></html>`;
+            
+            // Open print dialog for PDF
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(html);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function generateDoc() {
+            const data = getFormData();
+            
+            // Create HTML content for Word doc
+            let html = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                      xmlns:w='urn:schemas-microsoft-com:office:word' 
+                      xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Demo Intake Form</title>
+                    <style>
+                        body { font-family: Calibri, sans-serif; font-size: 11pt; line-height: 1.5; }
+                        h1 { color: #0176d3; font-size: 20pt; border-bottom: 3px solid #0176d3; padding-bottom: 10px; }
+                        h2 { color: #032d60; font-size: 14pt; margin-top: 20px; border-bottom: 1px solid #ccc; }
+                        .label { font-weight: bold; color: #032d60; }
+                        p { margin: 8px 0; }
+                        ul { margin: 10px 0 10px 20px; }
+                        li { margin: 5px 0; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Demo Intake Form</h1>
+                    <h2>${data.accountName || '[Account Name]'}</h2>
+            `;
+            
+            if (data.opptyLink) html += `<p><span class="label">Opportunity Link:</span> ${data.opptyLink}</p>`;
+            if (data.website) html += `<p><span class="label">Website:</span> ${data.website}</p>`;
+            
+            if (data.dealPov) {
+                html += `<h2>OUR DEAL POV / How are we helping them win?</h2><p>${data.dealPov}</p>`;
+            }
+            
+            if (data.products.length > 0) {
+                html += `<h2>WHAT PRODUCTS ARE WE SUGGESTING and why</h2><ul>`;
+                data.products.forEach(p => {
+                    html += `<li>${p.name}${p.why ? ` - ${p.why}` : ''}</li>`;
+                });
+                html += `</ul>`;
+            }
+            
+            if (data.issues.length > 0) {
+                html += `<h2>KEY BUSINESS ISSUES / Goals</h2><ul>`;
+                data.issues.forEach(i => html += `<li>${i}</li>`);
+                html += `</ul>`;
+            }
+            
+            if (data.useCase) html += `<h2>Tell me about their use case</h2><p>${data.useCase}</p>`;
+            if (data.sfTech) html += `<h2>Current SF Tech Owned</h2><p>${data.sfTech}</p>`;
+            if (data.externalTech) html += `<h2>External Tech Owned</h2><p>${data.externalTech}</p>`;
+            if (data.personality) html += `<h2>Personality of the Team</h2><p>${data.personality}</p>`;
+            if (data.revenue) html += `<h2>About the Company - How do they make money?</h2><p>${data.revenue}</p>`;
+            if (data.audience) html += `<h2>Business Model (B2B or B2C)</h2><p>${data.audience}</p>`;
+            
+            if (data.contacts.length > 0) {
+                html += `<h2>Point of Contacts</h2><ul>`;
+                data.contacts.forEach(c => html += `<li>${c}</li>`);
+                html += `</ul>`;
+            }
+            
+            if (data.partner) html += `<p><span class="label">Implementation Partner:</span> ${data.partner}</p>`;
+            if (data.timeline) html += `<p><span class="label">Timeline:</span> ${data.timeline}</p>`;
+            if (data.competitor) html += `<p><span class="label">Competitor:</span> ${data.competitor}</p>`;
+            if (data.risks) html += `<h2>Any risks I should be aware of?</h2><p>${data.risks}</p>`;
+            if (data.additional) html += `<h2>Anything Else?</h2><p>${data.additional}</p>`;
+            
+            html += `</body></html>`;
+            
+            // Create blob and download
+            const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fileName = `Demo_Intake_${data.accountName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.doc`;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Word document downloaded! Check your Downloads folder.');
+        }
+
+        function generateTxt() {
+            const data = getFormData();
+            
+            // Create text content
+            let content = `DEMO INTAKE FORM\n`;
+            content += `===========================================\n\n`;
+            
+            // Account Name
+            content += `${data.accountName || '[Account Name]'}\n\n`;
+            
+            // Basic Info
+            if (data.opptyLink) content += `Opportunity Link: ${data.opptyLink}\n`;
+            if (data.website) content += `Website: ${data.website}\n`;
+            content += `\n-------------------------------------------\n\n`;
+            
+            // Deal POV
+            if (data.dealPov) {
+                content += `OUR DEAL POV / How are we helping them win?\n`;
+                content += `${data.dealPov}\n\n`;
+            }
+            
+            // Products
+            if (data.products.length > 0) {
+                content += `WHAT PRODUCTS ARE WE SUGGESTING and why:\n`;
+                data.products.forEach(product => {
+                    content += `  • ${product.name}${product.why ? ` - ${product.why}` : ''}\n`;
+                });
+                content += `\n`;
+            }
+            
+            // Business Issues
+            if (data.issues.length > 0) {
+                content += `KEY BUSINESS ISSUES / Goals:\n`;
+                data.issues.forEach(issue => {
+                    content += `  • ${issue}\n`;
+                });
+                content += `\n`;
+            }
+            
+            // Use Case
+            if (data.useCase) {
+                content += `Tell me about their use case:\n`;
+                content += `${data.useCase}\n\n`;
+            }
+            
+            // Tech Stack
+            if (data.sfTech) {
+                content += `Current SF Tech Owned:\n`;
+                content += `${data.sfTech}\n\n`;
+            }
+            
+            if (data.externalTech) {
+                content += `External Tech Owned:\n`;
+                content += `${data.externalTech}\n\n`;
+            }
+            
+            // Personality
+            if (data.personality) {
+                content += `Personality of the Team:\n`;
+                content += `${data.personality}\n\n`;
+            }
+            
+            content += `-------------------------------------------\n\n`;
+            
+            // Company Info
+            if (data.revenue) {
+                content += `About the Company - How do they make money?\n`;
+                content += `${data.revenue}\n\n`;
+            }
+            
+            if (data.audience) {
+                content += `Business Model (B2B or B2C):\n`;
+                content += `${data.audience}\n\n`;
+            }
+            
+            // Contacts
+            if (data.contacts.length > 0) {
+                content += `Point of Contacts:\n`;
+                data.contacts.forEach(contact => {
+                    content += `  • ${contact}\n`;
+                });
+                content += `\n`;
+            }
+            
+            // Other fields
+            if (data.partner) content += `Implementation Partner: ${data.partner}\n`;
+            if (data.timeline) content += `Timeline: ${data.timeline}\n`;
+            if (data.competitor) content += `Competitor: ${data.competitor}\n`;
+            content += `\n`;
+            
+            // Risks
+            if (data.risks) {
+                content += `Any risks I should be aware of?\n`;
+                content += `${data.risks}\n\n`;
+            }
+            
+            // Additional
+            if (data.additional) {
+                content += `Anything Else?\n`;
+                content += `${data.additional}\n`;
+            }
+            
+            // Create and download text file
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fileName = `Demo_Intake_${data.accountName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Text file downloaded! Check your Downloads folder.');
+        }
+
+        // Initialize
+        showStep(1);
+    </script>
+</body>
+</html>
+
