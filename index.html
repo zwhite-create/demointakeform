@@ -490,7 +490,6 @@
             <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next →</button>
             <button class="btn btn-success" id="generateBtn" style="display: none;" onclick="generatePDF()">📄 Download PDF</button>
             <button class="btn btn-success" id="generateDocBtn" style="display: none;" onclick="generateDoc()">📝 Download DOC</button>
-            <button class="btn btn-secondary" id="generateTxtBtn" style="display: none;" onclick="generateTxt()">📋 Download TXT</button>
         </div>
     </div>
 
@@ -551,13 +550,11 @@
                 nextBtn.style.display = 'none';
                 generateBtn.style.display = 'inline-block';
                 document.getElementById('generateDocBtn').style.display = 'inline-block';
-                document.getElementById('generateTxtBtn').style.display = 'inline-block';
                 showSummary();
             } else {
                 nextBtn.style.display = 'block';
                 generateBtn.style.display = 'none';
                 document.getElementById('generateDocBtn').style.display = 'none';
-                document.getElementById('generateTxtBtn').style.display = 'none';
             }
             
             updateProgress();
@@ -756,11 +753,14 @@
         function generateDoc() {
             const data = getFormData();
             
+            // Ensure account name exists
+            if (!data.accountName) {
+                alert('⚠️ Please enter an Account Name before generating the document.');
+                return;
+            }
+            
             // Create HTML content for Word doc
-            let html = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-                      xmlns:w='urn:schemas-microsoft-com:office:word' 
-                      xmlns='http://www.w3.org/TR/REC-html40'>
+            let html = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
                     <title>Demo Intake Form</title>
@@ -821,8 +821,8 @@
             
             html += `</body></html>`;
             
-            // Create blob and download
-            const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+            // Create blob and download with proper encoding
+            const blob = new Blob([html], { type: 'application/msword;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -834,123 +834,6 @@
             URL.revokeObjectURL(url);
             
             alert('✅ Word document downloaded! Check your Downloads folder.');
-        }
-
-        function generateTxt() {
-            const data = getFormData();
-            
-            // Create text content
-            let content = `DEMO INTAKE FORM\n`;
-            content += `===========================================\n\n`;
-            
-            // Account Name
-            content += `${data.accountName || '[Account Name]'}\n\n`;
-            
-            // Basic Info
-            if (data.opptyLink) content += `Opportunity Link: ${data.opptyLink}\n`;
-            if (data.website) content += `Website: ${data.website}\n`;
-            content += `\n-------------------------------------------\n\n`;
-            
-            // Deal POV
-            if (data.dealPov) {
-                content += `OUR DEAL POV / How are we helping them win?\n`;
-                content += `${data.dealPov}\n\n`;
-            }
-            
-            // Products
-            if (data.products.length > 0) {
-                content += `WHAT PRODUCTS ARE WE SUGGESTING and why:\n`;
-                data.products.forEach(product => {
-                    content += `  • ${product.name}${product.why ? ` - ${product.why}` : ''}\n`;
-                });
-                content += `\n`;
-            }
-            
-            // Business Issues
-            if (data.issues.length > 0) {
-                content += `KEY BUSINESS ISSUES / Goals:\n`;
-                data.issues.forEach(issue => {
-                    content += `  • ${issue}\n`;
-                });
-                content += `\n`;
-            }
-            
-            // Use Case
-            if (data.useCase) {
-                content += `Tell me about their use case:\n`;
-                content += `${data.useCase}\n\n`;
-            }
-            
-            // Tech Stack
-            if (data.sfTech) {
-                content += `Current SF Tech Owned:\n`;
-                content += `${data.sfTech}\n\n`;
-            }
-            
-            if (data.externalTech) {
-                content += `External Tech Owned:\n`;
-                content += `${data.externalTech}\n\n`;
-            }
-            
-            // Personality
-            if (data.personality) {
-                content += `Personality of the Team:\n`;
-                content += `${data.personality}\n\n`;
-            }
-            
-            content += `-------------------------------------------\n\n`;
-            
-            // Company Info
-            if (data.revenue) {
-                content += `About the Company - How do they make money?\n`;
-                content += `${data.revenue}\n\n`;
-            }
-            
-            if (data.audience) {
-                content += `Business Model (B2B or B2C):\n`;
-                content += `${data.audience}\n\n`;
-            }
-            
-            // Contacts
-            if (data.contacts.length > 0) {
-                content += `Point of Contacts:\n`;
-                data.contacts.forEach(contact => {
-                    content += `  • ${contact}\n`;
-                });
-                content += `\n`;
-            }
-            
-            // Other fields
-            if (data.partner) content += `Implementation Partner: ${data.partner}\n`;
-            if (data.timeline) content += `Timeline: ${data.timeline}\n`;
-            if (data.competitor) content += `Competitor: ${data.competitor}\n`;
-            content += `\n`;
-            
-            // Risks
-            if (data.risks) {
-                content += `Any risks I should be aware of?\n`;
-                content += `${data.risks}\n\n`;
-            }
-            
-            // Additional
-            if (data.additional) {
-                content += `Anything Else?\n`;
-                content += `${data.additional}\n`;
-            }
-            
-            // Create and download text file
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            const fileName = `Demo_Intake_${data.accountName.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.txt`;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alert('✅ Text file downloaded! Check your Downloads folder.');
         }
 
         // Initialize
