@@ -409,6 +409,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Budget</label>
+                    <input type="text" id="budget" placeholder="Estimated budget or range">
+                </div>
+
+                <div class="form-group">
                     <label>Key Business Issues / Goals <span class="required">*</span></label>
                     <div class="list-group" id="issuesList">
                         <div class="list-item">
@@ -439,7 +444,7 @@
                     <label>Point of Contacts</label>
                     <div class="list-group" id="contactsList">
                         <div class="list-item">
-                            <input type="text" class="contact-input" placeholder="Name, role, why are they coming?">
+                            <input type="text" class="contact-input" placeholder="Name, role, level of authority in the company, and why are they coming?">
                         </div>
                     </div>
                     <button type="button" class="add-button" onclick="addContact()">+ Add Another Contact</button>
@@ -507,7 +512,7 @@
             const newItem = document.createElement('div');
             newItem.className = 'list-item';
             newItem.innerHTML = `
-                <input type="text" class="contact-input" placeholder="Name, role, why are they coming?">
+                <input type="text" class="contact-input" placeholder="Name, role, level of authority in the company, and why are they coming?">
                 <button type="button" class="remove-button" onclick="this.parentElement.remove()">✕</button>
             `;
             contactsList.appendChild(newItem);
@@ -570,6 +575,7 @@
                 personality: document.getElementById('personality').value,
                 revenue: document.getElementById('revenue').value,
                 audience: document.getElementById('audience').value,
+                budget: document.getElementById('budget').value,
                 contacts: [],
                 partner: document.getElementById('partner').value,
                 timeline: document.getElementById('timeline').value,
@@ -624,6 +630,7 @@
                 <h3>Demo & Deal Information</h3>
                 ${data.dealPov ? `<div class="summary-item"><span class="summary-label">Deal POV:</span> ${data.dealPov}</div>` : ''}
                 ${data.products.length > 0 ? `<div class="summary-item"><span class="summary-label">Products:</span> ${data.products.map(p => p.name + (p.why ? ` - ${p.why}` : '')).join(', ')}</div>` : ''}
+                ${data.budget ? `<div class="summary-item"><span class="summary-label">Budget:</span> ${data.budget}</div>` : ''}
                 ${data.issues.length > 0 ? `<div class="summary-item"><span class="summary-label">Key Issues:</span> ${data.issues.join(', ')}</div>` : ''}
                 ${data.useCase ? `<div class="summary-item"><span class="summary-label">Use Case:</span> ${data.useCase}</div>` : ''}
                 ${data.personality ? `<div class="summary-item"><span class="summary-label">Personality:</span> ${data.personality}</div>` : ''}
@@ -676,6 +683,8 @@
                 });
                 html += `</ul></div>`;
             }
+
+            if (data.budget) html += `<p><span class="label">Budget:</span> ${data.budget}</p>`;
             
             if (data.issues.length > 0) {
                 html += `<div class="section"><h2>Key Business Issues / Goals</h2><ul>`;
@@ -748,6 +757,8 @@
                 });
                 html += `</ul>`;
             }
+
+            if (data.budget) html += `<p><span class="label">Budget:</span> ${data.budget}</p>`;
             
             if (data.issues.length > 0) {
                 html += `<h2>KEY BUSINESS ISSUES / Goals</h2><ul>`;
