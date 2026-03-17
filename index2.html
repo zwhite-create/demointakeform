@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Cloud Discovery Quick Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .section {
+            padding: 30px;
+            border-right: 2px solid #e5e7eb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .section:nth-child(2n) {
+            border-right: none;
+        }
+
+        .section.full-width {
+            grid-column: 1 / -1;
+            border-right: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Color coding */
+        .prep .section-header { border-color: #10b981; color: #10b981; }
+        .power .section-header { border-color: #f59e0b; color: #f59e0b; }
+        .channels .section-header { border-color: #8b5cf6; color: #8b5cf6; }
+        .data .section-header { border-color: #ef4444; color: #ef4444; }
+        .stakeholders .section-header { border-color: #06b6d4; color: #06b6d4; }
+        .brief .section-header { border-color: #ec4899; color: #ec4899; }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .checklist li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .power-questions {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .power-question {
+            margin: 15px 0;
+            padding-left: 25px;
+            position: relative;
+            font-weight: 600;
+            color: #92400e;
+            font-size: 1rem;
+        }
+
+        .power-question:before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+
+        .question-category {
+            margin: 20px 0;
+        }
+
+        .category-title {
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .question-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .question-list li {
+            padding: 6px 0 6px 20px;
+            position: relative;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+
+        .question-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #9ca3af;
+        }
+
+        .highlight-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+        }
+
+        .highlight-box strong {
+            color: #1e40af;
+        }
+
+        .brief-template {
+            background: #fce7f3;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .brief-section {
+            margin: 12px 0;
+        }
+
+        .brief-section strong {
+            color: #be185d;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .brief-section ul {
+            list-style: none;
+            margin-left: 15px;
+        }
+
+        .brief-section li {
+            font-size: 0.9rem;
+            color: #831843;
+            padding: 3px 0;
+        }
+
+        .brief-section li:before {
+            content: "•";
+            margin-right: 8px;
+            color: #ec4899;
+        }
+
+        .tip-box {
+            background: #dcfce7;
+            border: 2px solid #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+
+        .tip-box strong {
+            color: #065f46;
+        }
+
+        .demo-button {
+            display: inline-block;
+            background: #ec4899;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(236,72,153,0.4);
+        }
+
+        .demo-button:hover {
+            background: #db2777;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .section {
+                border-right: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Marketing Cloud Discovery Quick Guide</h1>
+            <p>Your visual cheat sheet for uncovering what marketers really need</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Pre-Call Prep -->
+            <div class="section prep">
+                <div class="section-header">
+                    <span class="section-icon">⚡</span>
+                    <h2 class="section-title">30-Second Prep</h2>
+                </div>
+                <ul class="checklist">
+                    <li>Check their website &amp; socials</li>
+                    <li>Are they running paid ads? (Google, LinkedIn, Meta)</li>
+                    <li>Subscribe to their email list</li>
+                    <li>LinkedIn stalk the attendees</li>
+                    <li>Note their marketing channels</li>
+                    <li>Check industry &amp; competitors</li>
+                </ul>
+                <div class="tip-box">
+                    <strong>Pro Move:</strong> Come with 2-3 observations about their marketing. "I noticed you're running LinkedIn ads—tell me about that strategy" = instant credibility.
+                </div>
+            </div>
+
+            <!-- Power Questions -->
+            <div class="section power">
+                <div class="section-header">
+                    <span class="section-icon">🔥</span>
+                    <h2 class="section-title">5 Power Questions</h2>
+                </div>
+                <p style="margin-bottom: 15px; color: #78350f; font-weight: 600;">Memorize these. Everything else flows from them.</p>
+                <div class="power-questions">
+                    <div class="power-question">What metric, if you moved it, would make you a hero to leadership?</div>
+                    <div class="power-question">Walk me through your current marketing tech stack. What makes you want to throw your laptop?</div>
+                    <div class="power-question">If I gave you a magic wand for your marketing ops, what's the first thing you'd fix?</div>
+                    <div class="power-question">Tell me about a campaign you're really proud of. What made it work?</div>
+                    <div class="power-question">What would a career-defining win look like for you this year?</div>
+                </div>
+            </div>
+
+            <!-- Marketing Channels & Tactics -->
+            <div class="section channels">
+                <div class="section-header">
+                    <span class="section-icon">📊</span>
+                    <h2 class="section-title">Channels &amp; Campaigns</h2>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">📧 Email Marketing</div>
+                    <ul class="question-list">
+                        <li>What marketing automation tool are you using? And do you love it or hate it?</li>
+                        <li>Open rates? Click rates? Better or worse than you want?</li>
+                        <li>How sophisticated is your segmentation?</li>
+                        <li>Can you see email journey in your CRM?</li>
+                        <li>What email automation do you wish you could build?</li>
+                    </ul>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">💰 Paid Media</div>
+                    <ul class="question-list">
+                        <li>What channels? (Google, LinkedIn, Meta, display?)</li>
+                        <li>What's working? What's burning budget?</li>
+                        <li>Can you attribute spend to actual revenue?</li>
+                        <li>How do you track performance across channels?</li>
+                        <li>Can you retarget based on email/web behavior?</li>
+                    </ul>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">🌐 Web &amp; Social</div>
+                    <ul class="question-list">
+                        <li>How personalized is your web experience?</li>
+                        <li>Can you track individual customer journeys?</li>
+                        <li>Where do prospects typically drop off?</li>
+                        <li>How consistent is messaging across channels?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Data & Tech Stack -->
+            <div class="section data">
+                <div class="section-header">
+                    <span class="section-icon">🔧</span>
+                    <h2 class="section-title">Data &amp; Tech Stack</h2>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">🗂️ Current Tools</div>
+                    <ul class="question-list">
+                        <li>What tools are you using today?</li>
+                        <li>Which ones do you love? Which frustrate you daily?</li>
+                        <li>Where does data get stuck between systems?</li>
+                        <li>What tools have you tried &amp; abandoned? Why?</li>
+                    </ul>
+                </div>
+
+                <div class="highlight-box">
+                    <strong>Draw it out:</strong> Create a simple tech stack map during the call. Boxes and arrows showing how data flows (or doesn't). This visual helps them see their own pain.
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">📈 Data &amp; Analytics</div>
+                    <ul class="question-list">
+                        <li>Do you have the adequate information about each customer to be an effective marketer?</li>
+                        <li>Can you see unified view of each customer?</li>
+                        <li>What questions can't you answer about customers?</li>
+                        <li>How are you personalizing with data?</li>
+                        <li>What insights do you need to make confident decisions?</li>
+                    </ul>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">😤 Pain Points (Go Deep!)</div>
+                    <ul class="question-list">
+                        <li>What keeps you up at night?</li>
+                        <li>What takes 10x longer than it should?</li>
+                        <li>What manual work is killing your team's soul?</li>
+                        <li><strong>What's the cost?</strong> (Time? Money? Opportunities? Morale?)</li>
+                        <li><strong>What happens if you don't fix this in 6 months?</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Stakeholders & Decision Process -->
+            <div class="section stakeholders">
+                <div class="section-header">
+                    <span class="section-icon">👥</span>
+                    <h2 class="section-title">People &amp; Politics</h2>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">🎯 The Humans</div>
+                    <ul class="question-list">
+                        <li>What are YOU personally accountable for this year?</li>
+                        <li>Where do you see your career heading?</li>
+                        <li>What accomplishment would you put on your resume?</li>
+                        <li>If this gave you back 10 hours/week, what would you do with it?</li>
+                        <li>What would make this a career-defining win?</li>
+                    </ul>
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">🏢 Decision-Making</div>
+                    <ul class="question-list">
+                        <li>Who else needs to be involved?</li>
+                        <li>Who signs the check? (Economic Buyer)</li>
+                        <li>Who's the internal champion?</li>
+                        <li>Who might push back? Why?</li>
+                        <li>What's driving the timeline?</li>
+                        <li>What criteria matter most in evaluation?</li>
+                    </ul>
+                </div>
+
+                <div class="tip-box">
+                    <strong>Map it:</strong> Create a quick stakeholder map. Name, role, champion/neutral/blocker, what they care about personally.
+                </div>
+
+                <div class="question-category">
+                    <div class="category-title">⚔️ Competition</div>
+                    <ul class="question-list">
+                        <li>Looking at other solutions?</li>
+                        <li>Who are your top 3 competitors doing in marketing that worries you?</li>
+                        <li>Ever worked with Salesforce before? Experience?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SE Brief Template -->
+            <div class="section brief full-width">
+                <div class="section-header">
+                    <span class="section-icon">📋</span>
+                    <h2 class="section-title">What Your SE Needs From You</h2>
+                </div>
+                <p style="margin-bottom: 15px; font-weight: 600; color: #831843;">Fill this out after every discovery call. Your SE will love you.</p>
+                
+                <a href="https://zwhite-create.github.io/demointakeform/" class="demo-button" target="_blank" rel="noopener noreferrer">
+                    Demo Intake Form
+                </a>
+                <p style="margin-top: 8px; font-size: 0.9rem; color: #6b21a8;">
+                    Fill this form out after discovery to give your SE the information they need.
+                </p>
+
+                <div class="brief-template">
+                    <div class="brief-section">
+                        <strong>🎯 The Story (Most Important!)</strong>
+                        <ul>
+                            <li>What's the emotional driver? (Career advancement? Team survival? Proving themselves?)</li>
+                            <li>What does success look like in THEIR words?</li>
+                            <li>What would make this a career-defining win for them?</li>
+                        </ul>
+                    </div>
+
+                    <div class="brief-section">
+                        <strong>🏢 Company Context</strong>
+                        <ul>
+                            <li>Industry, top 3 competitors, market position</li>
+                            <li>Company priorities this year</li>
+                            <li>Metrics they're measured on (pipeline? revenue? CAC? brand?)</li>
+                        </ul>
+                    </div>
+
+                    <div class="brief-section">
+                        <strong>🔧 Tech &amp; Pain</strong>
+                        <ul>
+                            <li>Current tech stack (include your visual map!)</li>
+                            <li>Channels they use (email, paid, web, mobile, social)</li>
+                            <li>Top 3 pain points &amp; what they're costing them</li>
+                            <li>Integration nightmares or data flow issues</li>
+                        </ul>
+                    </div>
+
+                    <div class="brief-section">
+                        <strong>👥 Stakeholder Map</strong>
+                        <ul>
+                            <li>Decision-maker, champion, influencers, blockers</li>
+                            <li>What each person cares about personally</li>
+                        </ul>
+                    </div>
+
+                    <div class="brief-section">
+                        <strong>🎬 Demo Must-Haves</strong>
+                        <ul>
+                            <li>Top 3 capabilities to showcase</li>
+                            <li>Specific use cases they mentioned</li>
+                            <li>Integration points to highlight</li>
+                            <li>Concerns to proactively address</li>
+                        </ul>
+                    </div>
+
+                    <div class="brief-section">
+                        <strong>⚔️ Competition</strong>
+                        <ul>
+                            <li>Who else are they evaluating?</li>
+                            <li>What do we need to differentiate on?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
